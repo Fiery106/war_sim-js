@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            War Sim v0.1
+        </title>
+
+        <link rel="stylesheet" href="css/battle.css" />
+    </head>
+
+
+
+    <body>
+        <header id="top-hud" class="hud-element"> <!-- Flexbox -->
+            <div id="resources">
+                <div id="money-element">
+                    <img src="images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp" id="money-img"/>
+                    <p id="money-curr" class="button-text">
+                        $$$
+                    </p>
+                </div>
+
+                <div id="troops-element">
+                    <img src="images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp" id="troops-img"/>
+                    <p id="troops-curr" class="button-text">
+                        000
+                    </p>
+                </div>
+            </div>
+
+            <div id="day-count">
+                <div id="day-element">
+                    <p id="day-curr" class="button-text">
+                        69 ☀️
+                    </p>
+                    <img src="images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp" id="day-img"/>
+                </div>
+            </div>
+        </header>
+
+
+        <main id="battle-screen"> <!-- Grid -->
+            
+        </main>
+
+
+        <footer id="bottom-hud" class="hud-element"> <!-- Flexbox -->
+            <div id="army-buttons">
+                <button id="squad-button" class="battle-button" onclick="">
+                    <p id="squad-text" class="button-text">
+                        Squad
+                    </p>
+                </button>
+
+                <button id="storage-button" class="battle-button" onclick="">
+                    <p id="storage-text" class="button-text">
+                        Storage
+                    </p>
+                </button>
+            </div>
+
+            <div>
+                <button id="skip-turn" onclick="" class="button-text">
+                    >>>
+                </button>
+            </div>
+
+            <div id="options">
+                <button id="option-button" class="battle-button" onclick="">
+                    <p id="option-text" class="button-text">
+                        Settings
+                    </p>
+                </button>
+
+                <button id="quit-button" onclick="quitGame()">
+                    <p id="quit-text" class="button-text">
+                        Quit
+                    </p>
+                </button>
+            </div>
+        </footer>
+    
+
+        <script src="js/battle.js"></script>
+    </body>
+</html>

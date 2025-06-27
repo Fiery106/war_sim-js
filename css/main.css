@@ -1,0 +1,22 @@
+body {
+    text-align: center;
+}
+
+.main-button {
+    width: 200px;
+    height: 80px;
+    border-radius: 0;
+    border: none;
+
+    margin: 16px 4px;
+    
+}
+
+.button-text {
+    font-size: 18px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#greet {
+    margin-top: 100px;
+}

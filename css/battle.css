@@ -1,0 +1,77 @@
+img {
+    max-width: 40px;
+    max-height: 40px;
+}
+
+.hud-element {
+    display: flex;
+    width: 100%;
+    height: 80px;
+
+    margin: 0;
+    padding: 0;
+
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    flex-direction: row;
+    align-items: center;
+}
+
+#top-hud, #bottom-hud {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+#top-hud {
+    top: 0;
+}
+
+#bottom-hud {
+    bottom: 0;
+}
+
+#resources, #army-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: start;
+}
+
+#money-element, #troops-element, #day-element {
+    display: flex;
+
+    padding: 8px 16px;
+}
+
+#money-img, #troops-img, #day-img {
+    padding: 8px 16px;
+}
+
+.button-text {
+    font-size: 18px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#day-count, #options {
+    display: flex;
+    width: 100%;
+    justify-content: end;
+}
+
+.battle-button, #quit-button, #skip-turn {
+    width: 200px;
+    height: 80px;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+
+#quit-button {
+    background-color: red;
+}
+
+#skip-turn {
+    width: 100px;
+    border-radius: 0;
+}

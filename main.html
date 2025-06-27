@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>
-            Welcome to war sim!
+            Welcome to War Sim! (WIP TITLE)
         </title>
 
         
@@ -21,14 +21,26 @@
 
         <main>
             <div>
-                <button onclick="" id="play" class="main-button">
-                    Play
+                <button onclick="playGame()" id="play" class="main-button">
+                    <p id="play-text" class="button-text">
+                        Play
+                    </p>
                 </button>
             </div>
+
             <div>
-                <button onclick="" id="credits" class="main-button">
-                    Credits
+                <button onclick="showCredits()" id="credits" class="main-button">
+                    <p id="credits-text" class="button-text">
+                        Credits
+                    </p>
                 </button>
+            </div>
+
+            <div>
+                <label>
+                    Do you want to delete all saved data?
+                </label>
+                <input type="checkbox" id="deleteALL" value="delete" onclick="deleteFunc()"/>
             </div>
         </main>
 
@@ -42,7 +54,7 @@
             actually makes it possible to play the game lol
         -->
         <script src="js/greet.js"></script> <!--
-            random greet
+            random greet when the page loads up
         -->
     </body>
 </html>
