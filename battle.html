@@ -46,27 +46,35 @@
 
         <footer id="bottom-hud" class="hud-element"> <!-- Flexbox -->
             <div id="army-buttons">
-                <button id="squad-button" class="battle-button" onclick="">
+                <button id="squad-button" class="battle-button" onclick="openSquad()">
                     <p id="squad-text" class="button-text">
                         Squad
                     </p>
                 </button>
 
-                <button id="storage-button" class="battle-button" onclick="">
+                <button id="storage-button" class="battle-button" onclick="openStorage()">
                     <p id="storage-text" class="button-text">
                         Storage
+                    </p>
+                </button>
+
+                <button id="research-button" class="battle-button" onclick="openResearch()">
+                    <p id="research-text" class="button-text">
+                        Research
                     </p>
                 </button>
             </div>
 
             <div>
-                <button id="skip-turn" onclick="" class="button-text">
-                    >>>
+                <button id="skip-turn" class="button-text" onclick="">
+                    <p id="skip-text" class="button-text">
+                        >>>
+                    </p>
                 </button>
             </div>
 
             <div id="options">
-                <button id="option-button" class="battle-button" onclick="">
+                <button id="option-button" class="battle-button" onclick="openSettings()">
                     <p id="option-text" class="button-text">
                         Settings
                     </p>
@@ -82,5 +90,7 @@
     
 
         <script src="js/battle.js"></script>
+
+        <script src="js/manage.js"></script>
     </body>
 </html>

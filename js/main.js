@@ -1,9 +1,13 @@
 function deleteFunc() {
-    let menu = "main.html"
-
     /*
     DELETE LOCALSTORAGE HERE!!
     */
+
+    goBack()
+}
+
+function goBack() {
+    let menu = "main.html"
 
     window.open(menu, self)
 }
