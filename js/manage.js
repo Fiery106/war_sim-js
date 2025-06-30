@@ -112,9 +112,9 @@ function openSettings() {
 function viewOptions(x, y, z) {
     //x = show type, y = h1 text, z = content taken from localStorage
 
-    if (x > -1) {
-        y.textContent = content_names[x]
-    }
+    y.textContent = content_names[x]
+    
+    //
 }
 
 
