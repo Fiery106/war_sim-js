@@ -1,0 +1,22 @@
+.content-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-head {
+    margin-left: 16px;
+}
+
+.content {
+    display: flex;
+    background-color: lightgray;
+    margin: 0 16px 16px 16px;
+    min-height: 100px;
+    max-height: 350px;
+    align-items: center;
+}
+
+.button-field {
+    display: flex;
+    margin: 16px 0 16px 16px;
+}

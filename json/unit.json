@@ -1,0 +1,21 @@
+{
+    "Units": {
+        "soldier": {
+            "Name": "name here",
+            "Flying?": false,
+            "Amount": 20,
+            "Power": 1,
+            "Equipment": null,
+            "Status": null
+        },
+
+        "soldier2": {
+            "Name": "name here",
+            "Flying?": false,
+            "Amount": 20,
+            "Power": 1,
+            "Equipment": null,
+            "Status": null
+        }
+    }
+}

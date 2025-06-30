@@ -1,0 +1,10 @@
+{
+    "Items": {
+        "item1": {
+            "Name": "name here",
+            "Description": "description here",
+            "Amount": 1,
+            "Rarity": "white"
+        }
+    }
+}

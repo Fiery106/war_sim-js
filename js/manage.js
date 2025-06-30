@@ -39,8 +39,10 @@ function showMap() {
     battle_screen.innerHTML = ""
 }
 
+
+
 function openManageScreen(x) {
-    clearScreen()
+    clearScreen() //if we don't clear the screen, we just keep adding more menus stacked on top of each other
 
     let div = document.createElement("div");
     let h1 = document.createElement("h1");
@@ -55,41 +57,48 @@ function openManageScreen(x) {
 
     div.classList.add("content-header");
     h1.classList.add("content-head");
-    content.classList.add("content")
+    content.classList.add("content"); //flex
 
     flex.classList.add("button-field");
     back_button.classList.add("back-button");
-    hire_button.classList.add("back-button");
+    hire_button.classList.add("back-button"); //this might seem confusing, but we're just copy-pasting the border styling
     back.classList.add("button-text");
     hire.classList.add("button-text")
 
-    h1.textContent = content_names[0];
     back.textContent = "Back";
     hire.textContent = "Buy";
     //hire_button.onclick = ???
     back_button.onclick = function() {
         showMap()
     };
+/* 
+    I was going to write how the previous code I wrote ended up completely breaking the onclick functions,
+    but that was using "innerHTML" and "outerHTML", which converts them into strings, making them useless
+    This solution should not have any problems, although it is a little weird how that happened
 
+    💖 I despise this language 💖
+*/
     back_button.append(back)
     hire_button.append(hire)
     flex.append(hire_button, back_button)
-    battle_screen.append(div)
     div.append(h1, content, flex)
-    //battle_screen.innerHTML = div.outerHTML
 
-    viewOptions(x, h1, content)
+    battle_screen.append(div) //actually makes all of this show up lmao
+
+    viewOptions(x, h1, content) //
 }
+
+
 
 function openSquad() { //limits the manage screen selection to your homies <3
     openManageScreen(0)
 }
 
-function openStorage() {
+function openStorage() { //here's where I would put my items, IF I HAD ANY
     openManageScreen(1)
 }
 
-function openResearch() {
+function openResearch() { //WIP
     openManageScreen(2)
 }
 
@@ -99,10 +108,11 @@ function openSettings() {
 }
 
 
+
 function viewOptions(x, y, z) {
     //x = show type, y = h1 text, z = content taken from localStorage
 
-    if (x) {
+    if (x > -1) {
         y.textContent = content_names[x]
     }
 }

@@ -1,0 +1,28 @@
+{
+    "Tile": {
+        "Name": "name here",
+        "Type": [
+            "Forest",
+            "Mountain",
+            "River"
+        ],
+
+        "Resource": [
+            "Gold",
+            "Iron"
+        ],
+
+        "BelongsTo": [
+            "Ally",
+            "Enemy",
+            "None"
+        ],
+
+        "Power": 0,
+        "Resource-Amount": 2,
+        "Resource-Multiplier": 1.0, 
+
+        "Occupants": [],
+        "isCapital?": false 
+    }
+}
