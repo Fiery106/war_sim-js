@@ -18,7 +18,8 @@ img {
 }
 
 #top-hud, #bottom-hud {
-    position: absolute;
+    position: fixed;
+    z-index: 999;
     left: 0;
     right: 0;
 }
@@ -58,7 +59,7 @@ img {
     justify-content: end;
 }
 
-.battle-button, #quit-button, #skip-turn {
+.battle-button, #quit-button, #skip-turn, .back-button {
     width: 200px;
     height: 80px;
     border-radius: 0;
@@ -77,4 +78,43 @@ img {
 
     border-radius: 0;
     border-bottom: none;
+}
+
+.back-button {
+    border: 1px solid black;
+}
+
+
+
+.content-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-head {
+    margin-left: 16px;
+}
+
+.content {
+    display: flex;
+    background-color: lightgray;
+    margin: 0 16px 16px 16px;
+    min-height: 100px;
+    max-height: 350px;
+    align-items: center;
+}
+
+.button-field {
+    display: flex;
+    margin: 16px 0 16px 16px;
+}
+
+
+#battle-screen {
+    position: relative;
+    margin: 82px 0;
+
+    width: 100%;
+    min-height: 300px;
+    max-height: 100%;
 }
