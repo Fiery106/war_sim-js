@@ -1,0 +1,81 @@
+#map {
+    display: grid;
+    grid: 1fr 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr 1fr;
+    gap: 16px;
+
+    width: 90vw;
+}
+
+.land-tile {
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 0;
+    border: none;
+}
+
+.land-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 4px;
+}
+
+.land-name {
+    font-weight: 500;
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    text-align: start;
+
+    padding: 0 4px;
+    margin: 0;
+}
+
+.land-type {
+    font-weight: 500;
+    font-style: italic;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    align-self: start;
+
+    padding: 0;
+    padding-left: 4px;
+    margin: 0;
+}
+
+.land-power {
+    font-weight: 500;
+    font-size: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    padding: 0;
+    padding-left: 4px;
+    margin: 0;
+}
+
+.land-units {
+    display: flex;
+    flex-direction: row;
+
+    background-color: gray;
+}
+
+.land-resource {
+    padding: 4px;
+}
+
+.unit {
+    padding: 0 4px;
+}
+
+.friendly {
+    background-color: lightblue;
+}
+
+.hostile {
+    background-color: crimson;
+}

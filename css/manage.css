@@ -1,22 +1,29 @@
-.content-header {
+#content-header {
     display: flex;
     flex-direction: column;
 }
 
-.content-head {
+#content-head {
     margin-left: 16px;
 }
 
-.content {
+#content {
     display: flex;
     background-color: lightgray;
-    margin: 0 16px 16px 16px;
+    
+    width: 80vw;
     min-height: 100px;
     max-height: 350px;
-    align-items: center;
+
+    margin: 0 0 16px 16px;
+    align-items: start;
 }
 
-.button-field {
+#button-field {
     display: flex;
     margin: 16px 0 16px 16px;
+}
+
+.back-button {
+    border: 1px solid black;
 }
