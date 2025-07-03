@@ -5,7 +5,7 @@
             "Flying?": false,
             "Amount": 20,
             "Power": 1,
-            "Equipment": null,
+            "Equipment": [],
             "Status": null
         },
 
@@ -14,7 +14,7 @@
             "Flying?": false,
             "Amount": 20,
             "Power": 1,
-            "Equipment": null,
+            "Equipment": [],
             "Status": null
         }
     }

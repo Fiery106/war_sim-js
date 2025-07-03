@@ -1,52 +1,88 @@
 let battle_screen = document.getElementById("battle-screen");
 let map_columns = 5;
 let map_rows = 5;
-
 let content_names = [
     "Manage your squad", 
     "Organize your items", 
     "Develop research"
 ]
+let max_resource = 10;
+let max_power = 50;
 
-showMap()
-
-/*
 ready()
 
+
+
 function ready() {
-    if (LOCALSTORAGE) {
+    let first_time = localStorage.getItem("IsFirstTime?")
+
+    if (first_time == "true") {
+        console.log("hello")
         genMap()
     } else {
         showMap() 
     }
 }
 
-function genMap() {
-    //CODE GOES HERE
+async function genMap() {
+    let src1 = await fetchLandNames()
+    let src2 = await fetchLandInfo()
+    let map = [];
+    let id = 0;
 
+    for (let i = 0; i < map_columns * map_rows; i++) {
+        const land_name = src1[Math.floor(Math.random() * src1.length)];
+        const index = src1.indexOf(land_name);
+        if (index !== -1) {
+            src1.splice(index, 1)
+        }
+
+        const land_type = src2.type[Math.floor(Math.random() * src2.type.length)];
+        const land_resource = src2.resource[Math.floor(Math.random() * src2.resource.length)];
+        const land_amount = (Math.floor((Math.random() * max_resource)) + 1 * Math.random() * src2.multiplier).toFixed(1);
+        const land_power = Math.floor(Math.random() * max_power); 
+        id++
+
+        const land = {
+            id: id,
+            name: land_name,
+            type: land_type,
+            resource: land_resource,
+            amount: land_amount,
+            belongsTo: "None",
+            power: land_power,
+            occupants: "",
+            isCapital: false
+        }
+
+        map.push(land)
+    }
+
+    localStorage.setItem("MapData", JSON.stringify(map))
     showMap()
 }
-*/
 
-async function showMap() {
+function showMap() {
     clearScreen()
 
+    let num = 0;
     let div = document.createElement("div"); //#map
+    const storedMap = JSON.parse(localStorage.getItem('MapData')); //array
     
     div.setAttribute("id", "map");
 
     for (let i = 0; i < map_columns; i++) {
         for (let j = 0; j < map_rows; j++) {
-            let button = document.createElement("button") //.land-tile
-            let name = document.createElement("h1"); //.land-name
-            let type = document.createElement("h2"); //.land-type
-            let info = document.createElement("div"); //.land-info
-            let power = document.createElement("h3"); //.land-power
-            let units = document.createElement("div"); //.land-units
-            let unit1 = document.createElement("img"); //.unit
-            let unit2 = document.createElement("img"); //.unit
-            let res = document.createElement("img"); //.land-resource
-            let src = await fecthJson()
+            const button = document.createElement("button") //.land-tile
+            const name = document.createElement("h1"); //.land-name
+            const type = document.createElement("h2"); //.land-type
+            const info = document.createElement("div"); //.land-info
+            const power = document.createElement("h3"); //.land-power
+            const units = document.createElement("div"); //.land-units
+            const unit1 = document.createElement("img"); //.unit
+            const unit2 = document.createElement("img"); //.unit
+            const res = document.createElement("img"); //.land-resource
+            const amount = document.createElement("p"); //.land-amount
 
             button.classList.add("land-tile");
             name.classList.add("land-name");
@@ -57,22 +93,28 @@ async function showMap() {
             unit1.classList.add("unit");
             unit2.classList.add("unit");
             res.classList.add("land-resource");
+            amount.classList.add("land-amount");
 
-            name.textContent = src[Math.floor(Math.random() * src.length)];
-            type.textContent = "Type";
-            power.textContent = "99";
-            unit1.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
-            unit2.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
-            res.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
+            name.textContent = storedMap[num].name;
+            type.textContent = storedMap[num].type;
+            power.textContent = storedMap[num].power;
+            if (storedMap[num].occupants) {
+                unit1.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
+                unit2.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
+            }
+            res.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp" //replace with resource img!!!
+            amount.textContent = storedMap[num].amount;
             /*
             button.onclick = function() {
                 ?????????????
             };
             */
             units.append(unit1, unit2) //show units on the tile
-            info.append(power, units, res) //
+            info.append(power, units, amount, res) //
             button.append(name, type, info)
             div.append(button) //add the land tile to the map
+
+            num++
         }
     }
 
@@ -163,9 +205,16 @@ function clearScreen() {
     battle_screen.innerHTML = ""
 }
 
-async function fecthJson() {
+async function fetchLandNames() {
         let url = "json/land_names.json"
         let res = await fetch(url)
         let data = await res.json()
         return data.names
+    }
+
+async function fetchLandInfo() {
+        let url = "json/map.json"
+        let res = await fetch(url)
+        let data = await res.json()
+        return data.tiles
     }

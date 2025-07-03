@@ -1,0 +1,105 @@
+Variable names used for LocalStorage
+
+
+//Player Variables
+FirstTime? : bool
+- Checks whether this is the player's first time playing the game. Used to stop generating a new map when the game starts.
+
+PlayerGold : int
+- A form of currency. Used to buy more troops.
+
+PlayerIron : int
+- A form of currency. Used to buy more weapons.
+
+PlayerSquadList : array
+- An array of objects for all the units the player can manage.
+
+PlayerWeaponList : array
+- An array of objects for all the weapons the player can store.
+
+PlayerResearchList : array //NOT IMPLEMENTED
+- An array of objects for all the research the player has acquired.
+
+
+
+//Map Variables
+MapData : array
+- An array of objects that has all the relevant information about every tile on the map. 
+
+LandName : string
+- Self-explanatory.
+
+LandType : string
+- Self-explanatory.
+
+LandPower : int
+- Self-explanatory.
+
+LandUnits : array
+- Can only hold two units at a time.
+
+IsLandCapital? : bool
+- Self-explanatory, although capitals generate all resources.
+
+LandResourceType : string
+- What kind of resource the land will generate at the start of each turn.
+
+LandResourceAmount : int
+- A combination of amount and the multiplier for how much resource will be generated.
+
+LandSide : string
+- Either it belongs to you, the enemy or no one. 
+
+
+
+//Unit Variables
+UnitName : string
+- Self-explanatory.
+
+UnitFlying : bool
+- Used to check if the unit has disadvantage against capturing certain tiles.
+
+UnitAmount : int
+- Self-explanatory.
+
+UnitPower : int
+- Self-explanatory.
+
+UnitEquipment : object
+- Usually meant to give additional power to the unit. Since each unit can only hold one weapon, this variable is an object. 
+
+UnitStatus : string //NOT IMPLEMENTED
+- ???
+
+UnitSide : bool
+- Either this unit belongs to you or not, there's not much more than that.
+
+
+
+//Enemy Variables
+EnemyGold : int
+- A form of currency. Used to buy more troops.
+
+EnemyIron : int
+- A form of currency. Used to buy more weapons.
+
+EnemySquadList : array
+- An array of objects for all the units the enemy can manage.
+
+EnemyWeaponList : array
+- An array of objects for all the weapons the enemy can store.
+
+EnemyResearchList : array //NOT IMPLEMENTED
+- An array of objects for all the research the enemy has acquired.
+
+
+
+//Global Variables
+GameDay : int
+- The current day count. Limits how long the game is meant to last.
+
+PlayerCapturedTerritories : int 
+- A hidden stat meant to easily convey how many tiles the player has captured.
+
+EnemyCapturedTerritories : int 
+- A hidden stat meant to easily convey how many tiles the enemy has captured.

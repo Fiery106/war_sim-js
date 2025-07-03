@@ -1,7 +1,5 @@
 function deleteFunc() {
-    /*
-    DELETE LOCALSTORAGE HERE!!
-    */
+    localStorage.clear()
 
     goBack()
 }
@@ -15,10 +13,15 @@ function goBack() {
 
 function playGame() {
     let game = "battle.html"
+    let first_time = localStorage.getItem("IsFirstTime?");
 
-    /*
-    If this is the first time playing, change some values for Localstorage. Otherwise, load up existing values.
-    */
+    if(!first_time) {
+        localStorage.setItem("IsFirstTime?", true)
+        first_time = localStorage.getItem("IsFirstTime?");
+    } else {
+        localStorage.setItem("IsFirstTime?", false)
+        first_time = localStorage.getItem("IsFirstTime?");
+    }
 
     window.open(game, "_self")
 }
