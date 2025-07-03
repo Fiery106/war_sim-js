@@ -98,8 +98,11 @@ EnemyResearchList : array //NOT IMPLEMENTED
 GameDay : int
 - The current day count. Limits how long the game is meant to last.
 
-PlayerCapturedTerritories : int 
+PlayerCaptures : int 
 - A hidden stat meant to easily convey how many tiles the player has captured.
 
-EnemyCapturedTerritories : int 
+EnemyCaptures : int 
 - A hidden stat meant to easily convey how many tiles the enemy has captured.
+
+IsCapitalDead? : bool
+- A check to make sure the player's home base is still standing, in other words, the player is still in the game.

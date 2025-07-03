@@ -12,6 +12,8 @@
 
     border-radius: 0;
     border: none;
+
+    box-shadow: 2px 2px 0 black;
 }
 
 .land-info {
@@ -26,7 +28,6 @@
 .land-name {
     font-weight: 500;
     font-size: 16px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
     text-align: start;
 
@@ -38,7 +39,6 @@
     font-weight: 500;
     font-style: italic;
     font-size: 14px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
     align-self: start;
 
@@ -50,7 +50,6 @@
 .land-power {
     font-weight: 500;
     font-size: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
     padding: 0 4px;
 
@@ -73,17 +72,38 @@
 
 .land-amount {
     padding-left: 4px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .unit {
     padding: 0 4px;
 }
 
-.friendly {
-    background-color: lightblue;
+.land-text {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.hostile {
-    background-color: crimson;
+
+
+.ally {
+    background-color: #26E2FA;
+}
+
+.ally:hover {
+    background-color: #29C2D6;
+}
+
+.ally:active {
+    background-color: #2494A3;
+}
+
+.enemy {
+    background-color: #FA2E27;
+}
+
+.enemy:hover {
+    background-color: #D6302A;
+}
+
+.enemy:active {
+    background-color: #9D302C;
 }

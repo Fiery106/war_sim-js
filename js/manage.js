@@ -5,7 +5,13 @@ let content_names = [
     "Manage your squad", 
     "Organize your items", 
     "Develop research"
+];
+let factions = [
+    "enemy",
+    "ally",
+    "none"
 ]
+
 let max_resource = 10;
 let max_power = 50;
 
@@ -17,7 +23,6 @@ function ready() {
     let first_time = localStorage.getItem("IsFirstTime?")
 
     if (first_time == "true") {
-        console.log("hello")
         genMap()
     } else {
         showMap() 
@@ -31,6 +36,7 @@ async function genMap() {
     let id = 0;
 
     for (let i = 0; i < map_columns * map_rows; i++) {
+        //Man, I love randomly generated content
         const land_name = src1[Math.floor(Math.random() * src1.length)];
         const index = src1.indexOf(land_name);
         if (index !== -1) {
@@ -39,8 +45,8 @@ async function genMap() {
 
         const land_type = src2.type[Math.floor(Math.random() * src2.type.length)];
         const land_resource = src2.resource[Math.floor(Math.random() * src2.resource.length)];
-        const land_amount = (Math.floor((Math.random() * max_resource)) + 1 * Math.random() * src2.multiplier).toFixed(1);
-        const land_power = Math.floor(Math.random() * max_power); 
+        const land_amount = (Math.floor((Math.random() * max_resource)) * (Math.random() * src2.multiplier) + 1).toFixed(2);
+        const land_power = Math.floor(Math.random() * max_power) + 1; 
         id++
 
         const land = {
@@ -49,18 +55,34 @@ async function genMap() {
             type: land_type,
             resource: land_resource,
             amount: land_amount,
-            belongsTo: "None",
+            belongsTo: "",
             power: land_power,
             occupants: "",
             isCapital: false
         }
-
+        
+        if (land.id % map_columns == 1) { //this piece of code sets the starting positions for both sides
+            land.belongsTo = factions[0];
+        } else if (land.id % map_columns == 0) {
+            land.belongsTo = factions[1];
+        } else {
+            land.belongsTo = factions[2];
+        }
+        
         map.push(land)
     }
 
     localStorage.setItem("MapData", JSON.stringify(map))
     showMap()
 }
+
+function startGame(x) {
+    for (let i = 0; i < x.length; i++) {
+
+    }
+}
+
+
 
 function showMap() {
     clearScreen()
@@ -85,20 +107,28 @@ function showMap() {
             const amount = document.createElement("p"); //.land-amount
 
             button.classList.add("land-tile");
-            name.classList.add("land-name");
-            type.classList.add("land-type");
+            if (storedMap[num].belongsTo == factions[0]) { //enemy
+                button.classList.add(factions[0]);
+            } else if (storedMap[num].belongsTo == factions[1]) { //ally
+                button.classList.add(factions[1]);
+            } else { //none
+                button.classList.add(factions[2]);
+            }
+            
+            name.classList.add("land-name", "land-text");
+            type.classList.add("land-type", "land-text");
             info.classList.add("land-info");
-            power.classList.add("land-power");
+            power.classList.add("land-power", "land-text");
             units.classList.add("land-units");
             unit1.classList.add("unit");
             unit2.classList.add("unit");
             res.classList.add("land-resource");
-            amount.classList.add("land-amount");
+            amount.classList.add("land-amount", "land-text");
 
             name.textContent = storedMap[num].name;
             type.textContent = storedMap[num].type;
             power.textContent = storedMap[num].power;
-            if (storedMap[num].occupants) {
+            if (storedMap[num].occupants) { //!!!
                 unit1.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
                 unit2.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
             }
@@ -118,7 +148,26 @@ function showMap() {
         }
     }
 
+    updateMapInfo(storedMap)
+    localStorage.setItem("MapData", JSON.stringify(storedMap))
+    console.log(JSON.parse(localStorage.getItem("MapData")))
     battle_screen.append(div)
+}
+
+function updateMapInfo(x) { //MapData
+    let enemy_captures = 0;
+    let player_captures = 0;
+
+    for (let i = 0; i < x.length; i++) {
+        if (x[i].belongsTo == factions[0]) {
+            enemy_captures++
+        } else if (x[i].belongsTo == factions[1]) {
+            player_captures++
+        }
+    }
+
+    localStorage.setItem("PlayerCaptures", player_captures)
+    localStorage.setItem("EnemyCaptures", enemy_captures)
 }
 
 
@@ -171,8 +220,6 @@ function openManageScreen(x) {
     viewOptions(x, h1, content) //
 }
 
-
-
 function openSquad() { //limits the manage screen selection to your homies <3
     openManageScreen(0)
 }
@@ -185,13 +232,6 @@ function openResearch() { //WIP
     openManageScreen(2)
 }
 
-
-function openSettings() {
-    window.open("settings.html", "_self") //settings page here i guess man idk
-}
-
-
-
 function viewOptions(x, y, z) {
     //x = show type, y = h1 text, z = content taken from localStorage
 
@@ -200,6 +240,11 @@ function viewOptions(x, y, z) {
     //
 }
 
+
+
+function openSettings() {
+    window.open("settings.html", "_self") //settings page here i guess man idk
+}
 
 function clearScreen() {
     battle_screen.innerHTML = ""

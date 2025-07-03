@@ -13,17 +13,8 @@
             "Iron"
         ],
 
-        "belongsTo": [
-            "Ally",
-            "Enemy",
-            "None"
-        ],
-
         "power": 0,
         "amount": 1,
-        "multiplier": 2.0, 
-
-        "occupants": [],
-        "isCapital?": false 
+        "multiplier": 2.0
     }
 }

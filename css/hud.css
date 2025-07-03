@@ -79,6 +79,10 @@ img {
     background-color: plum;
 }
 
+#quit-button:hover {
+    background-color: violet;
+}
+
 #skip-turn {
     width: 100px;
     height: 10vh;
