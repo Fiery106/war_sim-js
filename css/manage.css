@@ -31,7 +31,7 @@
     border: 1px solid black;
 }
 
-.unit-display {
+.icon-display {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -46,7 +46,7 @@
     box-shadow: 2px 2px 0 black;
 }
 
-.unit-name {
+.icon-name {
     text-align: center;
     font-size: 18px;
 
@@ -54,7 +54,7 @@
     margin: 0;
 }
 
-.unit-stats {
+.icon-stats {
     display: flex;
     justify-content: space-between;
 
@@ -63,19 +63,19 @@
     margin: 0;
 }
 
-.unit-image {
+.icon-image {
     padding: 4px;
 }
 
-.unit-amount {
+.icon-amount {
     
 }
 
-.unit-power {
+.icon-power {
     padding-left: 32px; 
     padding-right: 4px;
 }
 
-.unit-text {
+.icon-text {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

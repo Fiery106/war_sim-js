@@ -23,6 +23,9 @@ PlayerResearch : array //NOT IMPLEMENTED
 UnitPrice : int
 - The amount needed to buy new units.
 
+WeaponPrice : int
+- The amount needed to buy new weapons.
+
 
 
 //Map Variables

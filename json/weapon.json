@@ -1,0 +1,9 @@
+{
+    "weapons": [
+        {
+        "name": "Rifle",
+        "power": 1,
+        "quality": "good"
+        }
+    ]
+}

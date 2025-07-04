@@ -1,6 +1,6 @@
 {
-    "units": {
-        "soldier1": {
+    "units": [
+        {
             "name": "Soldier I",
             "flying?": false,
             "amount": 20,
@@ -9,7 +9,7 @@
             "status": null
         },
 
-        "soldier2": {
+        {
             "name": "Soldier II",
             "flying?": false,
             "amount": 15,
@@ -18,7 +18,7 @@
             "status": null
         },
 
-        "soldier3": {
+        {
             "name": "Soldier III",
             "flying?": false,
             "amount": 10,
@@ -26,5 +26,5 @@
             "equipment": [],
             "status": null
         }
-    }
+    ]
 }

@@ -18,10 +18,12 @@ let max_power = 50;
 let day_limit = 30;
 
 let start_troop = 3;
+let start_weapon = 0;
 let start_gold = 100;
 let start_iron = 100;
 let unit_price = 50; //how much should units cost per hire?
-let squad_size = 24; //the max number of units you can hold
+let weapon_price = 25; //how much should weapons cost?
+let inventory_size = 24; //the max number of things you can hold at once
 
 ready()
 
@@ -94,14 +96,22 @@ async function genMap() {
 
 async function startGame() {
     let squad = [];
+    let storage = [];
     let unit = await fetchUnitInfo();
+    let weapon = await fetchWeaponInfo();
 
     for (let j = 0; j < start_troop; j++) {
-        squad.push(unit.soldier1);
+        squad.push(unit[0]);
+    }
+
+    for (let j = 0; j < start_weapon; j++) {
+        storage.push(weapon[0]);
     }
 
     localStorage.setItem("PlayerSquad", JSON.stringify(squad));
+    localStorage.setItem("PlayerWeapon", JSON.stringify(weapon));
     localStorage.setItem("UnitPrice", unit_price);
+    localStorage.setItem("WeaponPrice", weapon_price);
     localStorage.setItem("PlayerGold", start_gold);
     localStorage.setItem("PlayerIron", start_iron);
     localStorage.setItem("GameDay", 1);
@@ -203,8 +213,8 @@ function updateHUD() {
     let troops = document.getElementById("troops-curr");
     let day = document.getElementById("day-curr");
 
-    money.textContent = localStorage.getItem("PlayerGold");
-    troops.textContent = localStorage.getItem("PlayerIron");
+    money.textContent = Number(localStorage.getItem("PlayerGold")).toFixed(2);
+    troops.textContent = Number(localStorage.getItem("PlayerIron")).toFixed(2);
     day.textContent = `Day ${localStorage.getItem("GameDay")}/${day_limit}`;
 }
 
@@ -213,9 +223,8 @@ function updateHUD() {
 async function openManageScreen(x) {
     clearScreen() //if we don't clear the screen, it will keep adding more menus stacked on top of each other
 
-    let squad = JSON.parse(localStorage.getItem("PlayerSquad"));
-    let unit = await fetchUnitInfo();
-    let unit_price = localStorage.getItem("UnitPrice");
+    let unit_price = Number(localStorage.getItem("UnitPrice"));
+    let weapon_price = Number(localStorage.getItem("WeaponPrice"));
 
     let div = document.createElement("div");
     let h1 = document.createElement("h1");
@@ -239,78 +248,21 @@ async function openManageScreen(x) {
     hire.classList.add("button-text")
 
     back.textContent = "Back";
-    hire.textContent = "Buy";
+    h1.textContent = content_names[x];
 
-    if (squad.length) {
-        for (let i = 0; i < squad.length; i++) {
-            let unit = document.createElement("button");
-            let stats = document.createElement("div");
-            let name = document.createElement("h1");
-            let img = document.createElement("img");
-            let amount = document.createElement("p");
-            let power = document.createElement("p");
+    if (x == 0) { //Manage your squad
+        hire.textContent = `Hire (cost: ${unit_price})`;
 
-            unit.classList.add("unit-display");
-            stats.classList.add("unit-stats");
-            name.classList.add("unit-name", "unit-text");
-            img.classList.add("unit-image");
-            amount.classList.add("unit-amount", "unit-text");
-            power.classList.add("unit-power", "unit-text");
+        viewSquad(content, hire_button)
+    } else if (x == 1) { //Store your items
+        hire.textContent = `Buy (cost: ${weapon_price})`;
 
-            unit.onclick = function() {
-                //
-            }
+        viewStorage(content, hire_button)
+    } else { //Research
 
-            name.textContent = squad[i].name;
-            img.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
-            amount.textContent = `x${squad[i].amount}`;
-            power.textContent = squad[i].power * squad[i].amount;
-
-            stats.append(img, amount, power);
-            unit.append(name, stats)
-            content.append(unit)
-        }
-    } else {
-        let text = document.createElement("h1");
-
-        text.classList.add("unit-name", "unit-text");
-
-        text.textContent = "There are no units to show here :("
-
-        content.append(text)
     }
     
 
-
-    hire_button.onclick = function() {
-        let gold = Number(localStorage.getItem("PlayerGold"));
-        let new_squad = JSON.parse(localStorage.getItem("PlayerSquad"));
-
-        if (gold >= unit_price) {
-            if (squad.length < squad_size) {
-                let random = Math.floor(Math.random() * 3);
-
-                if (random == 1) {
-                    new_squad.push(unit.soldier1)
-                } else if (random == 2) {
-                    new_squad.push(unit.soldier2)
-                } else {
-                    new_squad.push(unit.soldier3)
-                }
-                
-                gold -= unit_price
-                unit_price += unit_price
-
-                localStorage.setItem("PlayerSquad", JSON.stringify(new_squad));
-                localStorage.setItem("UnitPrice", unit_price);
-                localStorage.setItem("PlayerGold", gold);
-
-                updateHUD()
-                openManageScreen(0)
-            }
-        }
-    }
-    
     back_button.onclick = function() {
         showMap()
     };
@@ -328,8 +280,6 @@ async function openManageScreen(x) {
     div.append(h1, content, flex)
 
     battle_screen.append(div) //actually makes all of this show up lmao
-
-    viewOptions(x, h1, content) //
 }
 
 function openSquad() { //limits the manage screen selection to your homies <3
@@ -344,10 +294,136 @@ function openResearch() { //WIP
     openManageScreen(2)
 }
 
-function viewOptions(x, y, z) {
-    //x = show type, y = h1 text, z = content taken from localStorage
 
-    y.textContent = content_names[x]
+
+async function viewSquad(x, y) {
+    let squad = JSON.parse(localStorage.getItem("PlayerSquad"));
+    let unit = await fetchUnitInfo();
+    let unit_price = Number(localStorage.getItem("UnitPrice"));
+
+    if (squad.length) {
+        for (let i = 0; i < squad.length; i++) {
+            let unit = document.createElement("button");
+            let stats = document.createElement("div");
+            let name = document.createElement("h1");
+            let img = document.createElement("img");
+            let amount = document.createElement("p");
+            let power = document.createElement("p");
+
+            unit.classList.add("icon-display");
+            stats.classList.add("icon-stats");
+            name.classList.add("icon-name", "icon-text");
+            img.classList.add("icon-image");
+            amount.classList.add("icon-amount", "icon-text");
+            power.classList.add("icon-power", "icon-text");
+
+            unit.onclick = function() {
+                //
+            }
+
+            name.textContent = squad[i].name;
+            img.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
+            amount.textContent = `x${squad[i].amount}`;
+            power.textContent = squad[i].power * squad[i].amount;
+
+            stats.append(img, amount, power);
+            unit.append(name, stats)
+            x.append(unit)
+        }
+    } else {
+        let text = document.createElement("h1");
+
+        text.classList.add("icon-name", "icon-text");
+
+        text.textContent = "There are no units to show here :("
+
+        x.append(text)
+    }
+
+    y.onclick = function() {
+        let gold = Number(localStorage.getItem("PlayerGold"));
+        let new_squad = squad;
+
+        if (gold >= unit_price) {
+            if (squad.length < inventory_size) {
+                new_squad.push(unit[Math.floor(Math.random() * unit.length)])
+                    
+                gold -= unit_price
+                unit_price += unit_price
+
+                localStorage.setItem("PlayerSquad", JSON.stringify(new_squad));
+                localStorage.setItem("UnitPrice", unit_price);
+                localStorage.setItem("PlayerGold", gold);
+
+                updateHUD()
+                openManageScreen(0)
+            }
+        }
+    }
+}
+
+
+async function viewStorage(x, y) {
+    let storage = JSON.parse(localStorage.getItem("PlayerWeapon"));
+    let weapon = await fetchWeaponInfo();
+    let weapon_price = Number(localStorage.getItem("WeaponPrice"));
+
+    if (storage.length) {
+        for (let i = 0; i < storage.length; i++) {
+            let weapon = document.createElement("button");
+            let stats = document.createElement("div");
+            let name = document.createElement("h1");
+            let img = document.createElement("img");
+            let power = document.createElement("p");
+
+            weapon.classList.add("icon-display");
+            stats.classList.add("icon-stats");
+            name.classList.add("icon-name", "icon-text");
+            img.classList.add("icon-image");
+            power.classList.add("icon-power", "icon-text");
+
+            weapon.onclick = function() {
+                //
+            }
+
+            name.textContent = storage[i].name;
+            img.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
+            power.textContent = storage[i].power;
+
+            stats.append(img, power);
+            weapon.append(name, stats)
+            x.append(weapon)
+        }
+    } else {
+        let text = document.createElement("h1");
+
+        text.classList.add("icon-name", "icon-text");
+
+        text.textContent = "There are no weapons to show here :("
+
+        x.append(text)
+    }
+
+    y.onclick = function() {
+        let iron = Number(localStorage.getItem("PlayerIron"));
+        let new_weapon = storage;
+
+        if (iron >= weapon_price) {
+            if (storage.length < inventory_size) {
+                new_weapon.push(weapon[Math.floor(Math.random() * weapon.length)])
+                    
+                iron -= weapon_price
+                weapon_price += weapon_price
+
+                localStorage.setItem("PlayerWeapon", JSON.stringify(new_weapon));
+                localStorage.setItem("WeaponPrice", weapon_price);
+                localStorage.setItem("PlayerIron", iron);
+
+                updateHUD()
+                openManageScreen(1)
+            }
+        }
+    }
 }
 
 
@@ -379,4 +455,11 @@ async function fetchUnitInfo() {
         let res = await fetch(url)
         let data = await res.json()
         return data.units
+    }
+
+async function fetchWeaponInfo() {
+        let url = "json/weapon.json"
+        let res = await fetch(url)
+        let data = await res.json()
+        return data.weapons
     }
