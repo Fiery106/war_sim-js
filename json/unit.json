@@ -1,21 +1,30 @@
 {
-    "Units": {
-        "soldier": {
-            "Name": "name here",
-            "Flying?": false,
-            "Amount": 20,
-            "Power": 1,
-            "Equipment": [],
-            "Status": null
+    "units": {
+        "soldier1": {
+            "name": "Soldier I",
+            "flying?": false,
+            "amount": 20,
+            "power": 1,
+            "equipment": [],
+            "status": null
         },
 
         "soldier2": {
-            "Name": "name here",
-            "Flying?": false,
-            "Amount": 20,
-            "Power": 1,
-            "Equipment": [],
-            "Status": null
+            "name": "Soldier II",
+            "flying?": false,
+            "amount": 15,
+            "power": 2,
+            "equipment": [],
+            "status": null
+        },
+
+        "soldier3": {
+            "name": "Soldier III",
+            "flying?": false,
+            "amount": 10,
+            "power": 5,
+            "equipment": [],
+            "status": null
         }
     }
 }

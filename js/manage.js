@@ -12,8 +12,16 @@ let factions = [
     "none"
 ]
 
+//the following variables change how the game will function
 let max_resource = 10;
 let max_power = 50;
+let day_limit = 30;
+
+let start_troop = 3;
+let start_gold = 100;
+let start_iron = 100;
+let unit_price = 50; //how much should units cost per hire?
+let squad_size = 24; //the max number of units you can hold
 
 ready()
 
@@ -57,7 +65,7 @@ async function genMap() {
             amount: land_amount,
             belongsTo: "",
             power: land_power,
-            occupants: "",
+            occupants: [],
             isCapital: false
         }
         
@@ -68,18 +76,37 @@ async function genMap() {
         } else {
             land.belongsTo = factions[2];
         }
+
+        if (land.id == 11 || land.id == 15) {
+            land.isCapital = true;
+            land.type = "Capital";
+            land.power *= 2;
+            land.amount *= 2;
+        }
         
-        map.push(land)
+        map.push(land);
     }
 
-    localStorage.setItem("MapData", JSON.stringify(map))
+    startGame()
+    localStorage.setItem("MapData", JSON.stringify(map));
     showMap()
 }
 
-function startGame(x) {
-    for (let i = 0; i < x.length; i++) {
+async function startGame() {
+    let squad = [];
+    let unit = await fetchUnitInfo();
 
+    for (let j = 0; j < start_troop; j++) {
+        squad.push(unit.soldier1);
     }
+
+    localStorage.setItem("PlayerSquad", JSON.stringify(squad));
+    localStorage.setItem("UnitPrice", unit_price);
+    localStorage.setItem("PlayerGold", start_gold);
+    localStorage.setItem("PlayerIron", start_iron);
+    localStorage.setItem("GameDay", 1);
+
+    updateHUD()
 }
 
 
@@ -89,8 +116,8 @@ function showMap() {
 
     let num = 0;
     let div = document.createElement("div"); //#map
-    const storedMap = JSON.parse(localStorage.getItem('MapData')); //array
-    
+    let storedMap = JSON.parse(localStorage.getItem('MapData')); //array
+
     div.setAttribute("id", "map");
 
     for (let i = 0; i < map_columns; i++) {
@@ -128,10 +155,11 @@ function showMap() {
             name.textContent = storedMap[num].name;
             type.textContent = storedMap[num].type;
             power.textContent = storedMap[num].power;
+            /*
             if (storedMap[num].occupants) { //!!!
                 unit1.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
                 unit2.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
-            }
+            } */
             res.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp" //replace with resource img!!!
             amount.textContent = storedMap[num].amount;
             /*
@@ -170,10 +198,24 @@ function updateMapInfo(x) { //MapData
     localStorage.setItem("EnemyCaptures", enemy_captures)
 }
 
+function updateHUD() {
+    let money = document.getElementById("money-curr");
+    let troops = document.getElementById("troops-curr");
+    let day = document.getElementById("day-curr");
+
+    money.textContent = localStorage.getItem("PlayerGold");
+    troops.textContent = localStorage.getItem("PlayerIron");
+    day.textContent = `Day ${localStorage.getItem("GameDay")}/${day_limit}`;
+}
 
 
-function openManageScreen(x) {
+
+async function openManageScreen(x) {
     clearScreen() //if we don't clear the screen, it will keep adding more menus stacked on top of each other
+
+    let squad = JSON.parse(localStorage.getItem("PlayerSquad"));
+    let unit = await fetchUnitInfo();
+    let unit_price = localStorage.getItem("UnitPrice");
 
     let div = document.createElement("div");
     let h1 = document.createElement("h1");
@@ -198,11 +240,81 @@ function openManageScreen(x) {
 
     back.textContent = "Back";
     hire.textContent = "Buy";
+
+    if (squad.length) {
+        for (let i = 0; i < squad.length; i++) {
+            let unit = document.createElement("button");
+            let stats = document.createElement("div");
+            let name = document.createElement("h1");
+            let img = document.createElement("img");
+            let amount = document.createElement("p");
+            let power = document.createElement("p");
+
+            unit.classList.add("unit-display");
+            stats.classList.add("unit-stats");
+            name.classList.add("unit-name", "unit-text");
+            img.classList.add("unit-image");
+            amount.classList.add("unit-amount", "unit-text");
+            power.classList.add("unit-power", "unit-text");
+
+            unit.onclick = function() {
+                //
+            }
+
+            name.textContent = squad[i].name;
+            img.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
+            amount.textContent = `x${squad[i].amount}`;
+            power.textContent = squad[i].power * squad[i].amount;
+
+            stats.append(img, amount, power);
+            unit.append(name, stats)
+            content.append(unit)
+        }
+    } else {
+        let text = document.createElement("h1");
+
+        text.classList.add("unit-name", "unit-text");
+
+        text.textContent = "There are no units to show here :("
+
+        content.append(text)
+    }
     
-    //hire_button.onclick = ???
+
+
+    hire_button.onclick = function() {
+        let gold = Number(localStorage.getItem("PlayerGold"));
+        let new_squad = JSON.parse(localStorage.getItem("PlayerSquad"));
+
+        if (gold >= unit_price) {
+            if (squad.length < squad_size) {
+                let random = Math.floor(Math.random() * 3);
+
+                if (random == 1) {
+                    new_squad.push(unit.soldier1)
+                } else if (random == 2) {
+                    new_squad.push(unit.soldier2)
+                } else {
+                    new_squad.push(unit.soldier3)
+                }
+                
+                gold -= unit_price
+                unit_price += unit_price
+
+                localStorage.setItem("PlayerSquad", JSON.stringify(new_squad));
+                localStorage.setItem("UnitPrice", unit_price);
+                localStorage.setItem("PlayerGold", gold);
+
+                updateHUD()
+                openManageScreen(0)
+            }
+        }
+    }
+    
     back_button.onclick = function() {
         showMap()
     };
+
 /* 
     I was going to write how the previous code I wrote ended up completely breaking the onclick functions,
     but that was using "innerHTML" and "outerHTML", which converts them into strings, making them useless
@@ -236,8 +348,6 @@ function viewOptions(x, y, z) {
     //x = show type, y = h1 text, z = content taken from localStorage
 
     y.textContent = content_names[x]
-    
-    //
 }
 
 
@@ -262,4 +372,11 @@ async function fetchLandInfo() {
         let res = await fetch(url)
         let data = await res.json()
         return data.tiles
+    }
+
+async function fetchUnitInfo() {
+        let url = "json/unit.json"
+        let res = await fetch(url)
+        let data = await res.json()
+        return data.units
     }

@@ -11,14 +11,17 @@ PlayerGold : int
 PlayerIron : int
 - A form of currency. Used to buy more weapons.
 
-PlayerSquadList : array
+PlayerSquad : array
 - An array of objects for all the units the player can manage.
 
-PlayerWeaponList : array
+PlayerWeapon : array
 - An array of objects for all the weapons the player can store.
 
-PlayerResearchList : array //NOT IMPLEMENTED
+PlayerResearch : array //NOT IMPLEMENTED
 - An array of objects for all the research the player has acquired.
+
+UnitPrice : int
+- The amount needed to buy new units.
 
 
 
@@ -83,13 +86,13 @@ EnemyGold : int
 EnemyIron : int
 - A form of currency. Used to buy more weapons.
 
-EnemySquadList : array
+EnemySquad : array
 - An array of objects for all the units the enemy can manage.
 
-EnemyWeaponList : array
+EnemyWeapon : array
 - An array of objects for all the weapons the enemy can store.
 
-EnemyResearchList : array //NOT IMPLEMENTED
+EnemyResearch : array //NOT IMPLEMENTED
 - An array of objects for all the research the enemy has acquired.
 
 

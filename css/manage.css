@@ -9,14 +9,17 @@
 
 #content {
     display: flex;
-    background-color: lightgray;
+    background-color: lightblue;
+
+    flex-wrap: wrap;
     
     width: 80vw;
     min-height: 100px;
     max-height: 350px;
 
     margin: 0 0 16px 16px;
-    align-items: start;
+    justify-content: start;
+    align-items: center;
 }
 
 #button-field {
@@ -26,4 +29,53 @@
 
 .back-button {
     border: 1px solid black;
+}
+
+.unit-display {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    border-radius: 0;
+    border: 0;
+    padding: 4px;
+    margin: 8px 8px;
+
+    height: 80px;
+
+    box-shadow: 2px 2px 0 black;
+}
+
+.unit-name {
+    text-align: center;
+    font-size: 18px;
+
+    padding: 4 16px;
+    margin: 0;
+}
+
+.unit-stats {
+    display: flex;
+    justify-content: space-between;
+
+    width: 125px;
+    padding: 0;
+    margin: 0;
+}
+
+.unit-image {
+    padding: 4px;
+}
+
+.unit-amount {
+    
+}
+
+.unit-power {
+    padding-left: 32px; 
+    padding-right: 4px;
+}
+
+.unit-text {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

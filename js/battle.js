@@ -4,6 +4,20 @@ function quitGame() {
     window.open(menu, "_self")
 }
 
+function advanceDay() {
+    //
+
+    let day = Number(localStorage.getItem("GameDay"));
+
+    if (day < day_limit) {
+        day++
+        localStorage.setItem("GameDay", day);
+        updateHUD()
+    } else {
+        gameOver()
+    }
+}
+
 
 
 function gameOver() {
