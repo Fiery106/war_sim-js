@@ -170,7 +170,11 @@ function showMap() {
                 unit1.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
                 unit2.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
             } */
-            res.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp" //replace with resource img!!!
+            if (storedMap[num].resource == "Gold") {
+                res.src = "images/icons/iron.png";
+            } else if (storedMap[num].resource == "Iron") {
+                res.src = "images/icons/money.png";
+            }
             amount.textContent = storedMap[num].amount;
             /*
             button.onclick = function() {
@@ -322,7 +326,7 @@ async function viewSquad(x, y) {
             }
 
             name.textContent = squad[i].name;
-            img.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
+            img.src = "images/icons/soldier.png"
             amount.textContent = `x${squad[i].amount}`;
             power.textContent = squad[i].power * squad[i].amount;
 
@@ -387,7 +391,7 @@ async function viewStorage(x, y) {
             }
 
             name.textContent = storage[i].name;
-            img.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
+            img.src = "images/icons/gun.png"
             power.textContent = storage[i].power;
 
             stats.append(img, power);
