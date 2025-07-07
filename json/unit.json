@@ -2,29 +2,29 @@
     "units": [
         {
             "name": "Soldier I",
-            "flying?": false,
             "amount": 20,
             "power": 1,
-            "equipment": [],
-            "status": null
+            "exhausted": false,
+            "selected": false,
+            "equipment": []
         },
 
         {
             "name": "Soldier II",
-            "flying?": false,
             "amount": 15,
             "power": 2,
-            "equipment": [],
-            "status": null
+            "exhausted": false,
+            "selected": false,
+            "equipment": []
         },
 
         {
             "name": "Soldier III",
-            "flying?": false,
             "amount": 10,
             "power": 5,
-            "equipment": [],
-            "status": null
+            "exhausted": false,
+            "selected": false,
+            "equipment": []
         }
     ]
 }

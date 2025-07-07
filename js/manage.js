@@ -21,9 +21,12 @@ let start_troop = 3;
 let start_weapon = 0;
 let start_gold = 100;
 let start_iron = 100;
-let unit_price = 50; //how much should units cost per hire?
+let unit_price = 25; //how much should units cost per hire?
+let price_increase = 25;
 let weapon_price = 25; //how much should weapons cost?
 let inventory_size = 24; //the max number of things you can hold at once
+
+let selected = 0;
 
 ready()
 
@@ -128,6 +131,8 @@ function showMap() {
     let div = document.createElement("div"); //#map
     let storedMap = JSON.parse(localStorage.getItem('MapData')); //array
 
+    console.log(storedMap)
+
     div.setAttribute("id", "map");
 
     for (let i = 0; i < map_columns; i++) {
@@ -165,22 +170,29 @@ function showMap() {
             name.textContent = storedMap[num].name;
             type.textContent = storedMap[num].type;
             power.textContent = storedMap[num].power;
-            /*
-            if (storedMap[num].occupants) { //!!!
-                unit1.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
-                unit2.src = "images/hhh-funny-cat-face-v0-aic7sbhrv8pb1.webp"
-            } */
+            
+            if (storedMap[num].occupants.length > 0) {
+                if (storedMap[num].occupants.length == 1) {
+                    unit1.src = "images/icons/soldier.png";
+                } else if (storedMap[num].occupants.length == 2){
+                    unit1.src = "images/icons/soldier.png";
+                    unit2.src = "images/icons/soldier.png";
+                }
+            } 
+
             if (storedMap[num].resource == "Gold") {
                 res.src = "images/icons/iron.png";
             } else if (storedMap[num].resource == "Iron") {
                 res.src = "images/icons/money.png";
             }
             amount.textContent = storedMap[num].amount;
-            /*
+
+
+            let fix = storedMap[num];
             button.onclick = function() {
-                ?????????????
+                checkLand(fix)
             };
-            */
+            
             units.append(unit1, unit2) //show units on the tile
             info.append(power, units, amount, res) //
             button.append(name, type, info)
@@ -192,9 +204,102 @@ function showMap() {
 
     updateMapInfo(storedMap)
     localStorage.setItem("MapData", JSON.stringify(storedMap))
-    console.log(JSON.parse(localStorage.getItem("MapData")))
     battle_screen.append(div)
 }
+
+function checkLand(x) { //x is storedMap
+    if (x.belongsTo == "ally") {
+        showLand(x)
+    } /*else { //+1, -1, +5, -5
+        let storedMap = JSON.parse(localStorage.getItem("MapData"));
+        if (x.id) {
+
+        } 
+    } */
+}
+
+function showLand(x) {
+    clearScreen()
+
+    let div = document.createElement("div");
+    let h1 = document.createElement("h1");
+    let content = document.createElement("div");
+
+    let flex = document.createElement("div");
+    let flex2 = document.createElement("div");
+    let row = document.createElement("div");
+    let back = document.createElement("p");
+    let send = document.createElement("p");
+    let back_button = document.createElement("button");
+    let send_button = document.createElement("button");
+    
+
+    div.setAttribute("id", "content-header");
+    row.setAttribute("id", "selected");
+    h1.setAttribute("id", "content-head");
+    content.setAttribute("id", "content"); 
+
+    flex.setAttribute("id", "button-field");
+    flex2.setAttribute("id", "button-field");
+    back_button.classList.add("back-button");
+    send_button.classList.add("back-button");
+    back.classList.add("button-text");
+    send.classList.add("button-text")
+
+    back.textContent = "Back";
+    h1.textContent = `Send units to ${x.name}`;
+
+    send.textContent = `Select`;
+    viewSquad(content, "", true, row, x.id - 1)
+    
+
+    back_button.onclick = function() {
+        doUnits("back")
+        showMap()
+    };
+
+    send_button.onclick = function() {
+        doUnits("send", x.id - 1)
+        showMap()
+    }
+
+    back_button.append(back)
+    send_button.append(send)
+    flex.append(back_button)
+    flex2.append(send_button)
+    div.append(h1, content, flex, row, flex2)
+
+    battle_screen.append(div) 
+}
+
+function doUnits(x, y = 0) {
+    let squad = JSON.parse(localStorage.getItem("PlayerSquad"));
+    let storedMap = JSON.parse(localStorage.getItem("MapData"));
+
+    for (let i = 0; i < squad.length; i++) {
+        if (x == "back") {
+            squad[i].selected = false;
+        } else if (x == "send") {
+            if (storedMap[y].occupants.length < 2) {
+                    if (squad[i].selected) {
+                        squad[i].exhausted = true;
+                        squad[i].selected = false;
+
+                        storedMap[y].occupants.push(squad[i])
+                        console.log(storedMap[y])
+                }
+            } else {
+                squad[i].selected = false;
+            }
+        }
+    } 
+    
+    localStorage.setItem("MapData", JSON.stringify(storedMap))
+    localStorage.setItem("PlayerSquad", JSON.stringify(squad))
+    selected = 0;
+}
+
+
 
 function updateMapInfo(x) { //MapData
     let enemy_captures = 0;
@@ -214,11 +319,11 @@ function updateMapInfo(x) { //MapData
 
 function updateHUD() {
     let money = document.getElementById("money-curr");
-    let troops = document.getElementById("troops-curr");
+    let iron = document.getElementById("troops-curr");
     let day = document.getElementById("day-curr");
 
     money.textContent = Number(localStorage.getItem("PlayerGold")).toFixed(2);
-    troops.textContent = Number(localStorage.getItem("PlayerIron")).toFixed(2);
+    iron.textContent = Number(localStorage.getItem("PlayerIron")).toFixed(2);
     day.textContent = `Day ${localStorage.getItem("GameDay")}/${day_limit}`;
 }
 
@@ -226,6 +331,7 @@ function updateHUD() {
 
 async function openManageScreen(x) {
     clearScreen() //if we don't clear the screen, it will keep adding more menus stacked on top of each other
+    doUnits("back")
 
     let unit_price = Number(localStorage.getItem("UnitPrice"));
     let weapon_price = Number(localStorage.getItem("WeaponPrice"));
@@ -300,7 +406,9 @@ function openResearch() { //WIP
 
 
 
-async function viewSquad(x, y) {
+async function viewSquad(x, y = "", z = false, k = "", l = 0) {
+    let storedMap = JSON.parse(localStorage.getItem("MapData"));
+    
     let squad = JSON.parse(localStorage.getItem("PlayerSquad"));
     let unit = await fetchUnitInfo();
     let unit_price = Number(localStorage.getItem("UnitPrice"));
@@ -321,27 +429,55 @@ async function viewSquad(x, y) {
             amount.classList.add("icon-amount", "icon-text");
             power.classList.add("icon-power", "icon-text");
 
-            unit.onclick = function() {
-                //
-            }
-
             name.textContent = squad[i].name;
             img.src = "images/icons/soldier.png"
             amount.textContent = `x${squad[i].amount}`;
             power.textContent = squad[i].power * squad[i].amount;
 
-            stats.append(img, amount, power);
-            unit.append(name, stats)
-            x.append(unit)
+            if (!z) {
+                stats.append(img, amount, power);
+                unit.append(name, stats)
+                x.append(unit)
+
+                unit.onclick = function() {
+                    // equip item here
+                }
+            } else {
+                if (!squad[i].selected && selected < 2) { 
+                    unit.onclick = function() {
+                        squad[i].selected = true;
+                        selected++
+                        localStorage.setItem("PlayerSquad", JSON.stringify(squad))
+                        //viewSquad(x, "", true, k)
+                        showLand(storedMap[l])
+                    }
+                } else if (squad[i].selected && selected > 0) {
+                    unit.onclick = function() {
+                        squad[i].selected = false;
+                        selected--
+                        localStorage.setItem("PlayerSquad", JSON.stringify(squad))
+                        //viewSquad(x, "", true, k)
+                        showLand(storedMap[l])
+                    }
+                }
+            }
+
+            if (z) {
+                if (squad[i].selected) {
+                    stats.append(img, amount, power);
+                    unit.append(name, stats)
+                    k.append(unit)
+                } else if (!squad[i].exhausted) {
+                    stats.append(img, amount, power);
+                    unit.append(name, stats)
+                    x.append(unit)
+                }
+            } else {
+                stats.append(img, amount, power);
+                unit.append(name, stats)
+                x.append(unit)
+            }
         }
-    } else {
-        let text = document.createElement("h1");
-
-        text.classList.add("icon-name", "icon-text");
-
-        text.textContent = "There are no units to show here :("
-
-        x.append(text)
     }
 
     y.onclick = function() {
@@ -353,7 +489,7 @@ async function viewSquad(x, y) {
                 new_squad.push(unit[Math.floor(Math.random() * unit.length)])
                     
                 gold -= unit_price
-                unit_price += unit_price
+                unit_price += price_increase
 
                 localStorage.setItem("PlayerSquad", JSON.stringify(new_squad));
                 localStorage.setItem("UnitPrice", unit_price);
@@ -417,7 +553,7 @@ async function viewStorage(x, y) {
                 new_weapon.push(weapon[Math.floor(Math.random() * weapon.length)])
                     
                 iron -= weapon_price
-                weapon_price += weapon_price
+                weapon_price += price_increase
 
                 localStorage.setItem("PlayerWeapon", JSON.stringify(new_weapon));
                 localStorage.setItem("WeaponPrice", weapon_price);

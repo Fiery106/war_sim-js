@@ -22,6 +22,19 @@
     align-items: center;
 }
 
+#selected {
+    display: flex;
+    background-color: salmon;
+
+    width: 80vw;
+    min-height: 100px;
+    max-height: 350px;
+
+    margin: 16px 0 16px 16px;
+    justify-content: start;
+    align-items: center;
+}
+
 #button-field {
     display: flex;
     margin: 16px 0 16px 16px;
@@ -68,7 +81,7 @@
 }
 
 .icon-amount {
-    
+    padding: 4px;
 }
 
 .icon-power {
