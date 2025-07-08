@@ -21,10 +21,12 @@ let start_troop = 3;
 let start_weapon = 0;
 let start_gold = 100;
 let start_iron = 100;
-let unit_price = 25; //how much should units cost per hire?
-let price_increase = 25;
-let weapon_price = 25; //how much should weapons cost?
-let inventory_size = 24; //the max number of things you can hold at once
+let unit_price = 20; //how much should units cost per hire?
+let price_increase = 20;
+let weapon_price = 20; //how much should weapons cost?
+let inventory_size = 8; //the max number of things you can hold at once
+
+let turn_limit = 4;
 
 let selected = 0;
 
@@ -37,6 +39,9 @@ function ready() {
 
     if (first_time == "true") {
         genMap()
+        localStorage.setItem("TurnLimit", turn_limit)
+        localStorage.setItem("IsCapitalAlive?", true)
+        localStorage.setItem("IsEnemyCapitalDead?", true)
     } else {
         showMap() 
     }
@@ -68,7 +73,7 @@ async function genMap() {
             type: land_type,
             resource: land_resource,
             amount: land_amount,
-            belongsTo: "",
+            belongsTo: "none",
             power: land_power,
             occupants: [],
             isCapital: false
@@ -210,66 +215,113 @@ function showMap() {
 function checkLand(x) { //x is storedMap
     if (x.belongsTo == "ally") {
         showLand(x)
-    } /*else { //+1, -1, +5, -5
+    } else { //+1, -1, +5, -5
         let storedMap = JSON.parse(localStorage.getItem("MapData"));
-        if (x.id) {
-
-        } 
-    } */
+        let fix = x.id - 1
+        if (storedMap[fix + 1] ||
+            storedMap[fix - 1] ||
+            storedMap[fix + 5] ||
+            storedMap[fix - 5]) {
+            if (storedMap[fix + 1].belongsTo == "ally" ||
+                storedMap[fix - 1].belongsTo == "ally" ||
+                storedMap[fix + 5].belongsTo == "ally" ||
+                storedMap[fix - 5].belongsTo == "ally") {
+                    showLand(x)
+                }
+        } else {
+            //SHOW ERROR MESSA>GE 
+        }
+    }
 }
 
 function showLand(x) {
-    clearScreen()
+    if (Number(localStorage.getItem("TurnLimit")) > 0) {
+        clearScreen()
 
-    let div = document.createElement("div");
-    let h1 = document.createElement("h1");
-    let content = document.createElement("div");
+        let div = document.createElement("div");
+        let h1 = document.createElement("h1");
+        let content = document.createElement("div");
 
-    let flex = document.createElement("div");
-    let flex2 = document.createElement("div");
-    let row = document.createElement("div");
-    let back = document.createElement("p");
-    let send = document.createElement("p");
-    let back_button = document.createElement("button");
-    let send_button = document.createElement("button");
-    
+        let flex = document.createElement("div");
+        let flex2 = document.createElement("div");
+        let row = document.createElement("div");
+        let back = document.createElement("p");
+        let send = document.createElement("p");
+        let back_button = document.createElement("button");
+        let send_button = document.createElement("button");
+        
 
-    div.setAttribute("id", "content-header");
-    row.setAttribute("id", "selected");
-    h1.setAttribute("id", "content-head");
-    content.setAttribute("id", "content"); 
+        div.setAttribute("id", "content-header");
+        row.setAttribute("id", "selected");
+        h1.setAttribute("id", "content-head");
+        content.setAttribute("id", "content"); 
 
-    flex.setAttribute("id", "button-field");
-    flex2.setAttribute("id", "button-field");
-    back_button.classList.add("back-button");
-    send_button.classList.add("back-button");
-    back.classList.add("button-text");
-    send.classList.add("button-text")
+        flex.setAttribute("id", "button-field");
+        flex2.setAttribute("id", "button-field");
+        back_button.classList.add("back-button");
+        send_button.classList.add("back-button");
+        back.classList.add("button-text");
+        send.classList.add("button-text")
 
-    back.textContent = "Back";
-    h1.textContent = `Send units to ${x.name}`;
+        back.textContent = "Back";
+        h1.textContent = `Send units to ${x.name}. Power level: ${x.power}`;
 
-    send.textContent = `Select`;
-    viewSquad(content, "", true, row, x.id - 1)
-    
+        send.textContent = `Select`;
+        viewSquad(content, "", true, row, x.id - 1)
+        
 
-    back_button.onclick = function() {
-        doUnits("back")
-        showMap()
-    };
+        back_button.onclick = function() {
+            doUnits("back")
+            showMap()
+        };
 
-    send_button.onclick = function() {
-        doUnits("send", x.id - 1)
-        showMap()
+        send_button.onclick = function() {
+            doUnits("send", x.id - 1)
+            showMap()
+        }
+
+        back_button.append(back)
+        send_button.append(send)
+        flex.append(back_button)
+        flex2.append(send_button)
+        div.append(h1, content, flex, row, flex2)
+
+        battle_screen.append(div) 
+    }
+}
+
+function fightLand(x, y) {
+    let ally_power = y.power * y.amount;
+    let enemy_power = x.power;
+    let turns = localStorage.getItem("TurnLimit")
+
+    if (x.belongsTo == "none") {
+        ally_power *= 2
     }
 
-    back_button.append(back)
-    send_button.append(send)
-    flex.append(back_button)
-    flex2.append(send_button)
-    div.append(h1, content, flex, row, flex2)
+    let range = ally_power + enemy_power;
+    let random = Math.floor(Math.random() * range);
 
-    battle_screen.append(div) 
+    if (random <= enemy_power) {
+        x.occupants = x.occupants;
+
+        y.amount -= 5;
+        x.power -= 1;
+        if (x.isCapital) {
+            x.power -= 1;
+        }
+    } else {
+        x.belongsTo = "ally";
+        if (x.isCapital) {
+            localStorage.setItem("IsEnemyCapitalDead?", false)
+            advanceDay()
+        }
+        x.occupants.push(y)
+        y.amount -= 1;
+    }
+
+    turns -= 1
+    localStorage.setItem("TurnLimit", turns)
 }
 
 function doUnits(x, y = 0) {
@@ -280,17 +332,23 @@ function doUnits(x, y = 0) {
         if (x == "back") {
             squad[i].selected = false;
         } else if (x == "send") {
-            if (storedMap[y].occupants.length < 2) {
-                    if (squad[i].selected) {
-                        squad[i].exhausted = true;
-                        squad[i].selected = false;
+            if (storedMap[y].occupants.length < 1) {
+                if (squad[i].selected) {
+                    squad[i].exhausted = true;
+                    squad[i].selected = false;
 
-                        storedMap[y].occupants.push(squad[i])
-                        console.log(storedMap[y])
+                    
+                    fightLand(storedMap[y], squad[i])
                 }
             } else {
                 squad[i].selected = false;
             }
+        } else if (x == "fire") {
+            const index = squad.indexOf(squad[i]);
+            if (index !== -1) {
+                squad.splice(index, 1)
+            }
+            squad[i].selected = false;
         }
     } 
     
@@ -312,6 +370,7 @@ function updateMapInfo(x) { //MapData
             player_captures++
         }
     }
+
 
     localStorage.setItem("PlayerCaptures", player_captures)
     localStorage.setItem("EnemyCaptures", enemy_captures)
@@ -340,6 +399,11 @@ async function openManageScreen(x) {
     let h1 = document.createElement("h1");
     let content = document.createElement("div");
 
+    let flex2 = document.createElement("div");
+    let row = document.createElement("div");
+    let send = document.createElement("p");
+    let send_button = document.createElement("button");
+
     let flex = document.createElement("div");
     let back = document.createElement("p");
     let hire = document.createElement("p");
@@ -351,19 +415,26 @@ async function openManageScreen(x) {
     h1.setAttribute("id", "content-head");
     content.setAttribute("id", "content"); //flex
 
+    row.setAttribute("id", "selected");
+    flex2.setAttribute("id", "button-field");
+
     flex.setAttribute("id", "button-field");
     back_button.classList.add("back-button");
     hire_button.classList.add("back-button"); //this might seem confusing, but we're just copy-pasting the border styling
     back.classList.add("button-text");
-    hire.classList.add("button-text")
+    hire.classList.add("button-text");
+
+    send_button.classList.add("back-button");
+    send.classList.add("button-text");
 
     back.textContent = "Back";
     h1.textContent = content_names[x];
+    send.textContent = `Fire`;
 
     if (x == 0) { //Manage your squad
         hire.textContent = `Hire (cost: ${unit_price})`;
 
-        viewSquad(content, hire_button)
+        viewSquad(content, hire_button, false, row)
     } else if (x == 1) { //Store your items
         hire.textContent = `Buy (cost: ${weapon_price})`;
 
@@ -377,6 +448,24 @@ async function openManageScreen(x) {
         showMap()
     };
 
+    send_button.onclick = function() {
+        let squad = JSON.parse(localStorage.getItem("PlayerSquad"));
+        let gold = Number(localStorage.getItem("PlayerGold"));
+
+        for (let i = 0; i < squad.length; i++) {
+            if (squad[i].selected) {
+                const index = squad.indexOf(squad[i]);
+                if (index !== -1) {
+                    squad.splice(index, 1)
+                    gold += price_increase;
+                }
+            } localStorage.setItem("PlayerSquad", JSON.stringify(squad));
+            localStorage.setItem("PlayerGold", gold);
+        }
+        showMap()
+        updateHUD()
+    }
+
 /* 
     I was going to write how the previous code I wrote ended up completely breaking the onclick functions,
     but that was using "innerHTML" and "outerHTML", which converts them into strings, making them useless
@@ -386,8 +475,10 @@ async function openManageScreen(x) {
 */
     back_button.append(back)
     hire_button.append(hire)
+    send_button.append(send)
     flex.append(hire_button, back_button)
-    div.append(h1, content, flex)
+    flex2.append(send_button)
+    div.append(h1, content, flex, row, flex2)
 
     battle_screen.append(div) //actually makes all of this show up lmao
 }
@@ -434,21 +525,29 @@ async function viewSquad(x, y = "", z = false, k = "", l = 0) {
             amount.textContent = `x${squad[i].amount}`;
             power.textContent = squad[i].power * squad[i].amount;
 
-            if (!z) {
-                stats.append(img, amount, power);
-                unit.append(name, stats)
-                x.append(unit)
+            if (z == false) {
+                if (squad[i].selected) {
+                    stats.append(img, amount, power);
+                    unit.append(name, stats)
+                    k.append(unit)
+                } else {
+                    stats.append(img, amount, power);
+                    unit.append(name, stats)
+                    x.append(unit)
+                }
 
                 unit.onclick = function() {
-                    // equip item here
+                    squad[i].selected = true;
+                    localStorage.setItem("PlayerSquad", JSON.stringify(squad));
+                    console.log(JSON.parse(localStorage.getItem("PlayerSquad")))
+                    //openManageScreen(0);
                 }
             } else {
-                if (!squad[i].selected && selected < 2) { 
+                if (!squad[i].selected && selected < 1) { 
                     unit.onclick = function() {
                         squad[i].selected = true;
                         selected++
                         localStorage.setItem("PlayerSquad", JSON.stringify(squad))
-                        //viewSquad(x, "", true, k)
                         showLand(storedMap[l])
                     }
                 } else if (squad[i].selected && selected > 0) {
@@ -456,7 +555,6 @@ async function viewSquad(x, y = "", z = false, k = "", l = 0) {
                         squad[i].selected = false;
                         selected--
                         localStorage.setItem("PlayerSquad", JSON.stringify(squad))
-                        //viewSquad(x, "", true, k)
                         showLand(storedMap[l])
                     }
                 }
@@ -472,10 +570,6 @@ async function viewSquad(x, y = "", z = false, k = "", l = 0) {
                     unit.append(name, stats)
                     x.append(unit)
                 }
-            } else {
-                stats.append(img, amount, power);
-                unit.append(name, stats)
-                x.append(unit)
             }
         }
     }
