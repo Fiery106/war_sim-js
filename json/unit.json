@@ -2,7 +2,7 @@
     "units": [
         {
             "name": "Soldier I",
-            "amount": 20,
+            "amount": 30,
             "power": 1,
             "exhausted": false,
             "selected": false,
@@ -11,7 +11,7 @@
 
         {
             "name": "Soldier II",
-            "amount": 15,
+            "amount": 20,
             "power": 2,
             "exhausted": false,
             "selected": false,
@@ -20,8 +20,8 @@
 
         {
             "name": "Soldier III",
-            "amount": 10,
-            "power": 5,
+            "amount": 15,
+            "power": 4,
             "exhausted": false,
             "selected": false,
             "equipment": []
