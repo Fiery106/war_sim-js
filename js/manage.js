@@ -147,12 +147,13 @@ async function startGame() {
 
 function showMap() {
     clearScreen()
+    updateHUD()
 
     let num = 0;
     let div = document.createElement("div"); //#map
-    let storedMap = JSON.parse(localStorage.getItem('MapData')); //array
+    let storedMap = JSON.parse(localStorage.getItem("MapData")); //array
 
-    console.log(storedMap)
+    //console.log(storedMap)
 
     div.setAttribute("id", "map");
 
@@ -318,7 +319,7 @@ function fightLand(x, y) {
     let ally_power = y.power * y.amount;
     let enemy_power = x.power;
     if (x.occupants.length > 0) {
-        enemy_power += x.occupants[0].power
+        enemy_power += x.occupants[0].power * x.occupants[0].amount;
     }
     let turns = localStorage.getItem("TurnLimit")
 
@@ -346,6 +347,7 @@ function fightLand(x, y) {
                 localStorage.setItem("IsEnemyCapitalDead?", true);
                 advanceDay()
             }
+            x.occupants = []
             x.occupants.push(y);
             y.amount -= 1;
         }
@@ -363,7 +365,7 @@ function doUnits(x, y = 0) {
         if (x == "back") {
             squad[i].selected = false;
         } else if (x == "send") {
-            if (storedMap[y].occupants.length < 1) {
+            if (storedMap[y].occupants.length < 1 || storedMap[y].belongsTo == "enemy") {
                 if (squad[i].selected) {
                     squad[i].exhausted = true;
                     squad[i].selected = false;
@@ -421,8 +423,10 @@ function updateHUD() {
 async function enemyMove() {
     let enemy_gold = Number(localStorage.getItem("EnemyGold"));
     let enemy_iron = Number(localStorage.getItem("EnemyIron"));
-    let enemy_squad = JSON.parse(localStorage.getItem("EnemySquad"));
     let enemy_price = Number(localStorage.getItem("EnemyPrice"));
+    let enemy_squad = JSON.parse(localStorage.getItem("EnemySquad"));
+    let capital_alive = localStorage.getItem("IsCapitalAlive?"); 
+    let capital_defeated = localStorage.getItem("IsEnemyCapitalDead?");
 
     let unit = await fetchUnitInfo()
 
@@ -434,25 +438,129 @@ async function enemyMove() {
         "Attack"
     ]
 
-    setTimeout(() => {
-        if (enemy_price < enemy_gold) {
-            enemy_squad.push(unit[Math.floor(Math.random() * unit.length)])
+    if (capital_alive == "true" && capital_defeated == "false") {
+        setTimeout(() => {
+            if (enemy_price < enemy_gold) {
+                enemy_squad.push(unit[Math.floor(Math.random() * unit.length)])
 
-            enemy_gold -= enemy_price;
-            enemy_price += price_increase;
+                enemy_gold -= enemy_price;
+                enemy_price += price_increase;
 
-            localStorage.setItem("EnemyGold", enemy_gold);
-            localStorage.setItem("EnemyPrice", enemy_price);
-            localStorage.setItem("EnemySquad", JSON.stringify(enemy_squad))
-        }
-        for (let i = 0; i < turn_limit; i++) {
-            let random = Math.floor(Math.random() * options.length);
-            //console.log(options[random])
-        }
+                localStorage.setItem("EnemyGold", enemy_gold);
+                localStorage.setItem("EnemyPrice", enemy_price);
+                localStorage.setItem("EnemySquad", JSON.stringify(enemy_squad));
+            }
 
-        console.log(enemy_squad)
-    }, 1000);
+            for (let i = 0; i < turn_limit; i++) {
+                let rng_option = Math.floor(Math.random() * options.length);
+                let storedMap = JSON.parse(localStorage.getItem("MapData"));
 
+                let enemy_squad_curr = JSON.parse(localStorage.getItem("EnemySquad"));
+                let rng_unit = Math.floor(Math.random() * enemy_squad_curr.length);
+
+                //console.log(enemy_squad_curr)
+                let available_units = []
+                for (let j = 0; j < enemy_squad_curr.length; j++) {
+                    if (enemy_squad_curr) {
+                        if (!enemy_squad_curr[j].exhausted) {
+                            available_units.push(enemy_squad_curr[i])
+                        }
+                    }
+                }
+
+                let enemy_tiles = [];
+
+                for (let j = 0; j < storedMap.length; j++) {
+                    if (storedMap[j].belongsTo == "enemy" && storedMap[j].occupants.length < 1) {
+                        enemy_tiles.push(storedMap[j].id - 1);
+                    }
+                }
+
+                let rng_tile = Math.floor(Math.random() * enemy_tiles.length);
+
+                if (options[rng_option] == "Protect") {
+                    if (available_units[rng_unit]) {
+                        available_units[rng_unit].exhausted = true;
+
+                        storedMap[enemy_tiles[rng_tile]].occupants.push(available_units[rng_unit]);
+                        localStorage.setItem("MapData", JSON.stringify(storedMap));
+                        localStorage.setItem("EnemySquad", JSON.stringify(enemy_squad_curr));
+                    }
+                    
+                } else if (options[rng_option] == "Attack") {
+                    let choose = storedMap[enemy_tiles[rng_tile] + 1];
+                    if (available_units[rng_unit]) {
+                        available_units[rng_unit].exhausted = true;
+
+                        if (choose.belongsTo == "none" || choose.belongsTo == "ally") {
+                            let enemy_power = available_units[rng_unit].power * available_units[rng_unit].amount;
+                            let ally_power = choose.power;
+                            if (choose.occupants.length > 0) {
+                                ally_power += choose.occupants[0].power * choose.occupants[0].amount;
+                            }
+
+                            if (choose.belongsTo == "none") {
+                                enemy_power *= 2;
+                            }
+
+                            let range = ally_power + enemy_power;
+                            let random = Math.floor(Math.random() * range);
+
+                            if (choose.belongsTo == "ally" || choose.belongsTo == "none") {
+                                if (random <= ally_power) {
+                                    choose.occupants = choose.occupants;
+
+                                    available_units[rng_unit].amount -= 5;
+
+                                    choose.power -= available_units[rng_unit].power;
+                                    if (choose.isCapital) {
+                                        choose.power -= 1;
+                                    }
+
+                                    const index = available_units.indexOf(available_units[rng_unit]);
+                                    if (index !== -1) {
+                                        available_units.splice(index, 1)
+                                    }
+
+                                    localStorage.setItem("MapData", JSON.stringify(storedMap));
+                                    enemy_squad_curr[rng_unit] = available_units[rng_unit];
+                                    localStorage.setItem("EnemySquad", JSON.stringify(enemy_squad));
+
+                                } else {
+                                    choose.belongsTo = "enemy";
+                                    if (choose.isCapital) {
+                                        localStorage.setItem("IsCapitalAlive?", false);
+                                        advanceDay()
+                                    }
+                                    choose.occupants = []
+
+                                    choose.occupants.push(available_units[rng_unit]);
+                                    available_units[rng_unit].amount -= 1;
+
+                                    const index = available_units.indexOf(available_units[rng_unit]);
+                                    if (index !== -1) {
+                                        available_units.splice(index, 1)
+                                    }
+
+                                    localStorage.setItem("MapData", JSON.stringify(storedMap));
+                                    //console.log(enemy_squad_curr[rng_unit]);
+                                    localStorage.setItem("EnemySquad", JSON.stringify(enemy_squad));
+                                }
+                            }
+                        } else {
+                            available_units[rng_unit].exhausted = false;
+                            //console.log(enemy_squad_curr[rng_unit]);
+                            localStorage.setItem("EnemySquad", JSON.stringify(enemy_squad));
+                        }
+                    }
+
+                    updateMapInfo(storedMap)
+                }
+            }
+
+            showMap()
+        }, 1000);
+    }
 }
 
 
