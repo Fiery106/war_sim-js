@@ -50,7 +50,7 @@ function currTurn(x) {
 
 
     for (let i = 0; i < player_squad.length; i++) {
-        if (player_squad) {
+        if (player_squad[i]) {
             player_squad[i].exhausted = false;
         }
         if (player_squad[i].amount <= 0) {
@@ -60,7 +60,7 @@ function currTurn(x) {
             }
         }
 
-        if (enemy_squad) {
+        if (enemy_squad[i]) {
             enemy_squad[i].exhausted = false;
         }
         if (enemy_squad[i].amount <= 0) {
