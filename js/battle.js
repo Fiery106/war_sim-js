@@ -25,6 +25,10 @@ function advanceDay() {
                 updateHUD()
                 updateMapInfo(storedMap)
                 showMap()
+            } else {
+                day = 30;
+                localStorage.setItem("GameDay", day);
+                gameOver()
             }
         }
     } else {
@@ -46,7 +50,9 @@ function currTurn(x) {
 
 
     for (let i = 0; i < player_squad.length; i++) {
-        player_squad[i].exhausted = false;
+        if (player_squad) {
+            player_squad[i].exhausted = false;
+        }
         if (player_squad[i].amount <= 0) {
             const index = player_squad.indexOf(player_squad[i]);
             if (index !== -1) {
@@ -54,7 +60,9 @@ function currTurn(x) {
             }
         }
 
-        enemy_squad[i].exhausted = false;
+        if (enemy_squad) {
+            enemy_squad[i].exhausted = false;
+        }
         if (enemy_squad[i].amount <= 0) {
             const index = enemy_squad.indexOf(enemy_squad[i]);
             if (index !== -1) {
